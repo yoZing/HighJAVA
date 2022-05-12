@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE sqlMap
+			PUBLIC "-//ibatis.apache.org//DTD SQL Map 2.0//EN"
+			"http://ibatis.apache.org/dtd/sql-map-2.dtd">
+<sqlMap namespace="board">
+
+<insert id="insertboard" parameterClass="dao.BoardVO">
+	insert into jdbc_board
+	(BOARD_NO, BOARD_TITLE, BOARD_WRITER, BOARD_DATE, BOARD_CONTENT) 
+	VALUES (BOARD_SEQ.NEXTVAL, #boardTitle#, #boardWriter#, SYSDATE, #boardContent#) 
+</insert>
+
+<update id="updateboard" parameterClass="dao.BoardVO">
+	UPDATE JDBC_BOARD 
+       SET BOARD_TITLE = #boardTitle#  
+          ,BOARD_WRITER = #boardWriter# 
+		  ,BOARD_DATE = SYSDATE 
+		  ,BOARD_CONTENT = #boardContent# 
+		   WHERE BOARD_NO = #boardNo# 
+</update>
+
+<resultMap id="boardMap" class="dao.BoardVO" >
+	<result property="boardNo" column="board_no"/>
+	<result property="boardTitle" column="board_title"/>
+	<result property="boardWriter" column="board_writer"/>
+	<result property="boardDate" column="board_date"/>
+	<result property="boardContent" column="board_content"/>
+</resultMap>
+
+<select id="printAll" resultMap="boardMap">
+	select * from jdbc_board
+</select>
+<delete id="deleteboard" parameterClass="String">
+	delete from jdbc_board where board_no = #boardNo#
+</delete>
+
+<select id="searchboard" parameterClass="brdVO" resultMap="boardMap">
+	select * from jdbc_board 
+	 where 1 = 1
+	 <isNotEmpty property="boardNo">
+	 	and board_no = #boardNo#
+	 </isNotEmpty>
+	 <isNotEmpty property="boardTitle">
+	 	and board_title = #boardTitle#
+	 </isNotEmpty>
+	 <isNotEmpty property="boardWriter">
+	 	and board_writer = #boardWriter#
+	 </isNotEmpty>
+	 <isNotEmpty property="boardDate">
+	 	and board_date = #boardDate#
+	 </isNotEmpty>
+	 <isNotEmpty property="boardContent">
+	 	and board_content like '%' || #boardContent# || '%'
+	 </isNotEmpty>
+</select>
+
+</sqlMap>
+
+
+
+
+
